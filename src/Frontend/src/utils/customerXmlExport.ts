@@ -1,14 +1,4 @@
-export interface CustomerListQuery {
-  id: number;
-  name: string;
-  address: string;
-  email: string;
-  phone: string;
-  iban: string;
-  code: string;
-  description: string;
-}
-
+import type { CustomerListQuery } from "../api/customerApi";
 const escapeXml = (value: string) =>
   value
     .replace(/&/g, "&amp;")

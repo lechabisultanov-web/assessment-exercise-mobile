@@ -13,37 +13,25 @@ import {
   Button,
   TextField
 } from "@mui/material";
+
 import { useEffect, useState } from "react";
 import { exportCustomersToXml } from "../utils/customerXmlExport";
-interface CustomerListQuery {
-  id: number;
-  name: string;
-  address: string;
-  email: string;
-  phone: string;
-  iban: string;
-  code: string;
-  description: string;
-}
+import { getCustomers, type CustomerListQuery } from "../api/customerApi";
+
+
 
 export default function CustomerListPage() {
   const [list, setList] = useState<CustomerListQuery[]>([]);
   const [filter, setFilter] = useState("");
 
-  const loadData = (currentFilter?: string) => {
-    let url = "/api/customers/list";
-
-    if (currentFilter && currentFilter.trim() !== "") {
-      url += `?filter=${encodeURIComponent(currentFilter)}`;
+   const loadData = async (currentFilter?: string) => {
+    try {
+      const data = await getCustomers(currentFilter);
+      setList(data);
+    } catch (error) {
+      console.error("Failed to load customers", error);
+      setList([]);
     }
-
-    fetch(url)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        setList(data as CustomerListQuery[]);
-      });
   };
 
   useEffect(() => {
