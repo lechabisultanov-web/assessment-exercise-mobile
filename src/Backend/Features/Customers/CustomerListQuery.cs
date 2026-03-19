@@ -32,19 +32,15 @@ internal class CustomerListQueryHandler(BackendContext context) : IRequestHandle
 
         if (!string.IsNullOrEmpty(request.Filter))
         {
-            var filter = request.Filter.ToLower();
+           var filter = request.Filter.Trim().ToLower();
 
             query = query.Where(q =>
                 q.Name.ToLower().Contains(filter) ||
                 q.Email.ToLower().Contains(filter));
         }
-
-        var data = await query.OrderBy(q => q.Name).ToListAsync(cancellationToken);
-        var result = new List<CustomerListQueryResponse>();
-
-        foreach (var item in data)
-        {
-            var resultItem = new CustomerListQueryResponse
+        return await query
+            .OrderBy(q => q.Name)
+            .Select(item => new CustomerListQueryResponse
             {
                 Id = item.Id,
                 Name = item.Name,
@@ -54,12 +50,8 @@ internal class CustomerListQueryHandler(BackendContext context) : IRequestHandle
                 Iban = item.Iban,
                 Code = item.CustomerCategory != null ? item.CustomerCategory.Code : "",
                 Description = item.CustomerCategory != null ? item.CustomerCategory.Description : ""
-            };
-
-            result.Add(resultItem);
-        }
-
-        return result;
+            })
+            .ToListAsync(cancellationToken);
     }
 }
 
