@@ -9,6 +9,9 @@ import {
   Typography,
   styled,
   tableCellClasses,
+  Box,
+  Button,
+  TextField
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -25,15 +28,26 @@ interface CustomerListQuery {
 
 export default function CustomerListPage() {
   const [list, setList] = useState<CustomerListQuery[]>([]);
+  const [filter, setFilter] = useState("");
 
-  useEffect(() => {
-    fetch("/api/customers/list")
+  const loadData = (currentFilter?: string) => {
+    let url = "/api/customers/list";
+
+    if (currentFilter && currentFilter.trim() !== "") {
+      url += `?filter=${encodeURIComponent(currentFilter)}`;
+    }
+
+    fetch(url)
       .then((response) => {
         return response.json();
       })
       .then((data) => {
         setList(data as CustomerListQuery[]);
       });
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
 
   return (
@@ -41,7 +55,26 @@ export default function CustomerListPage() {
       <Typography variant="h4" sx={{ textAlign: "center", mt: 4, mb: 4 }}>
         Customers
       </Typography>
-
+      <Box sx={{ display: "flex", gap: 2, mb: 3, alignItems: "center" }}>
+        <TextField
+          label="Search by name or email"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          size="small"
+        />
+        <Button variant="contained" onClick={() => loadData(filter)}>
+          Search
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setFilter("");
+            loadData("");
+          }}
+        >
+          Reset
+        </Button>
+      </Box>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="customer table">
           <TableHead>
