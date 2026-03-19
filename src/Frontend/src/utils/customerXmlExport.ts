@@ -1,4 +1,4 @@
-export interface CustomerXmlItem {
+export interface CustomerListQuery {
   id: number;
   name: string;
   address: string;
@@ -17,7 +17,7 @@ const escapeXml = (value: string) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
 
-export const exportCustomersToXml = (customers: CustomerXmlItem[]) => {
+export const exportCustomersToXml = (customers: CustomerListQuery[]) => {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Customers>
 ${customers

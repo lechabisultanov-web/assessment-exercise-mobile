@@ -14,7 +14,7 @@ import {
   TextField
 } from "@mui/material";
 import { useEffect, useState } from "react";
-
+import { exportCustomersToXml } from "../utils/customerXmlExport";
 interface CustomerListQuery {
   id: number;
   name: string;
@@ -73,6 +73,13 @@ export default function CustomerListPage() {
           }}
         >
           Reset
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => exportCustomersToXml(list)}
+        >
+          Export XML
         </Button>
       </Box>
       <TableContainer component={Paper}>
